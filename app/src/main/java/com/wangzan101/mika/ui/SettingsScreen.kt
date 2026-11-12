@@ -69,7 +69,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /** 设置里能进入的子页面;[Home] 是设置首页,[Advanced] 集中放置连接、维护和工程能力。 */
-private enum class SettingsPage { Home, Advanced, AppAccess, PhoneOps, Calls, Wechat, DuringWork, Capsule, Language, Notifications, Recommendations, Sandbox, Recovery, SelfCheck, ComputerAccess, McpServers, Root, Developer, RunStats }
+private enum class SettingsPage { Home, Advanced, AppAccess, PhoneOps, Automation, Calls, Wechat, DuringWork, Capsule, Language, Notifications, Recommendations, Sandbox, Recovery, SelfCheck, ComputerAccess, McpServers, Root, Developer, RunStats }
 
 /**
  * 设置页:总状态卡 + 常用 / 我的数据 / 其他。高级与其他只增加一层,各子页返回来时的页面。
@@ -183,6 +183,7 @@ fun SettingsScreen(
             mainModel = roles.main?.let { id -> configs.firstOrNull { it.id == id } }?.let(ProviderConnection::displayName),
             onBack = onBack, onProblem = onProblem, onOpenModels = onOpenModels,
             onOpenPhoneOps = { page = SettingsPage.PhoneOps },
+            onOpenAutomation = { page = SettingsPage.Automation },
             onOpenCalls = { page = SettingsPage.Calls },
             wechatState = wechatState, wechatBound = wechat.store.account() != null,
             onOpenWechat = { page = SettingsPage.Wechat },
@@ -215,6 +216,11 @@ fun SettingsScreen(
         SettingsPage.PhoneOps -> PhoneOpsScreen(
             status, androidRelease, onProblem,
             onRepair = { onFix(Fix.RepairPhoneHelper) }, onUnpair = { onFix(Fix.UnpairPhoneHelper) }, onBack = toHome,
+        )
+        SettingsPage.Automation -> AutomationScreen(
+            onBack = toHome,
+            onOpenAccessibility = { onFix(Fix.OpenAccessibility) },
+            onOpenNotifications = { onFix(Fix.AllowNotifications) },
         )
         SettingsPage.Calls -> CallSettingsScreen((context.applicationContext as com.wangzan101.mika.MikaApp).calls, onBack = toHome)
         SettingsPage.Notifications -> NotificationsScreen(status, onFix = ::fix, onBack = back)
@@ -328,6 +334,7 @@ fun SettingsContent(
     onProblem: (Problem) -> Unit,
     onOpenModels: () -> Unit,
     onOpenPhoneOps: () -> Unit = {},
+    onOpenAutomation: () -> Unit = {},
     onOpenCalls: () -> Unit = {},
     wechatState: WechatConnectionState = WechatConnectionState.NeedsBinding,
     wechatBound: Boolean = false,
@@ -362,6 +369,9 @@ fun SettingsContent(
             }
             ListRow(MikaIcons.Phone, stringResource(R.string.settings_phone_ops), onClick = onOpenPhoneOps) {
                 PhoneOpsPill(status)
+                RowChevron()
+            }
+            ListRow(MikaIcons.Code, stringResource(R.string.automation_title), stringResource(R.string.automation_settings_sub), onClick = onOpenAutomation) {
                 RowChevron()
             }
             ListRow(MikaIcons.Phone, stringResource(R.string.calls_title), stringResource(R.string.calls_entry_sub), onClick = onOpenCalls) { RowChevron() }

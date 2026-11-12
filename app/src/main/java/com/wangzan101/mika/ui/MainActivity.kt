@@ -557,7 +557,13 @@ private fun MikaRoot(
             phoneSetup.markGuideSeen()
             if (onboarding == OnboardingStep.Phone) goOnboarding(null) else nav.back()
         }
-        Route.Welcome -> WelcomeScreen { goOnboarding(OnboardingStep.Model) }
+        Route.Welcome -> WelcomeScreen(
+            onStart = { goOnboarding(OnboardingStep.Model) },
+            onSkipModel = {
+                onboardingState.markModelSetupDone()
+                goOnboarding(null)
+            },
+        )
         Route.ModelSetup -> {
             val inOnboarding = onboarding == OnboardingStep.Model
             ModelSetupScreen(
@@ -587,6 +593,7 @@ private fun MikaRoot(
                 search = ConversationStore.shared(context).search,
                 onPlans = { nav.pushFromDrawer(Route.Plans) },
                 onMemory = { nav.pushFromDrawer(Route.Memory) },
+                onAutomation = { nav.pushFromDrawer(Route.Automations) },
                 onSettings = { nav.pushFromDrawer(Route.Settings) },
                 onBrowser = { nav.pushFromDrawer(Route.Browser) },
                 onFiles = { filesFromDrawer = true; filesConversation = app.chat.ui.value.conversationId; nav.pushFromDrawer(Route.Files) },
@@ -668,6 +675,15 @@ private fun MikaRoot(
                 updateVersion = updateState.update?.version, onOpenAbout = { nav.push(Route.About) },
                 mcpServers = app.mcpServers)
         }
+        Route.Automations -> AutomationHubScreen(
+            onBack = back,
+            onOpenHaoyisheng = { nav.push(Route.Automation) },
+        )
+        Route.Automation -> AutomationScreen(
+            onBack = back,
+            onOpenAccessibility = { onFix(Fix.OpenAccessibility) },
+            onOpenNotifications = { onFix(Fix.AllowNotifications) },
+        )
         Route.Models -> ModelsScreen(store, onBack = back, onOpenSpeech = { nav.push(Route.SpeechModel) }, onOpenUsage = { nav.push(Route.Usage) })
         Route.Usage -> UsageScreen(app.usage, store, onBack = back, onOpenUrl = { openInBrowser(context, it) })
         Route.SpeechModel -> SpeechModelScreen(store, onBack = back)

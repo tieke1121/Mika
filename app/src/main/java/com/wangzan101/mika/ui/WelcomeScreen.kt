@@ -34,6 +34,7 @@ import com.wangzan101.mika.R
 import com.wangzan101.mika.ui.components.GroupCard
 import com.wangzan101.mika.ui.components.Hairline
 import com.wangzan101.mika.ui.components.IconTile
+import com.wangzan101.mika.ui.components.ButtonKind
 import com.wangzan101.mika.ui.components.MikaButton
 import com.wangzan101.mika.ui.components.PageBackground
 import com.wangzan101.mika.ui.components.ProgressDots
@@ -43,7 +44,7 @@ import com.wangzan101.mika.ui.theme.MikaType
 
 /** 上手第一步:说清 Mika 是什么、能做哪几类事,开始前要做的两件事和大概时间。 */
 @Composable
-fun WelcomeScreen(onStart: () -> Unit) {
+fun WelcomeScreen(onStart: () -> Unit, onSkipModel: () -> Unit) {
     val c = MikaTheme.colors
     PageBackground {
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars).windowInsetsPadding(WindowInsets.navigationBars)) {
@@ -71,6 +72,12 @@ fun WelcomeScreen(onStart: () -> Unit) {
                     style = MikaType.Hint, fontSize = 12.5.sp, color = c.ink3, textAlign = TextAlign.Center,
                 )
                 MikaButton(WelcomeCopy.START, onStart, Modifier.fillMaxWidth().testTag("welcome-start"))
+                MikaButton(
+                    WelcomeCopy.SKIP_MODEL,
+                    onSkipModel,
+                    Modifier.fillMaxWidth().padding(top = 8.dp).testTag("welcome-skip-model"),
+                    kind = ButtonKind.Tonal,
+                )
             }
         }
     }
@@ -99,6 +106,7 @@ object WelcomeCopy {
     val LEAD: String get() = tr(R.string.welcome_lead)
     val NOTE: String get() = tr(R.string.welcome_note)
     val START: String get() = tr(R.string.welcome_start)
+    val SKIP_MODEL: String get() = tr(R.string.welcome_skip_model)
 
     data class Item(val icon: ImageVector, val title: String, val body: String)
 

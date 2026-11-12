@@ -207,6 +207,16 @@
                 android:value="Runs a user-requested phone task on the app's own virtual display and shows its progress; afterwards keeps the one web page the user asked to keep open running, for at most two hours" />
         </service>
 
+        <!-- 用户从设置页启动的本地 Lua 自动化；不调用模型，只操作好医生课程播放页。 -->
+        <service
+            android:name=".automation.HaoyishengAutomationService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Runs a user-started local Lua script that advances educational videos through Android accessibility, with a persistent stop notification" />
+        </service>
+
         <!-- 通话:Telecom 绑定伴侣 InCallService,系统电话仍用自己的通话界面;前台服务在锁屏时撑住进程。 -->
         <service
             android:name=".calls.MikaInCallService"
